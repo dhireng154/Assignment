@@ -11,10 +11,12 @@ import (
 	"github.com/go-chi/chi"
 )
 
+// The Server struct is the primary server, featuring an in-memory data store
 type Server struct {
 	DataStore *InMemoryDataStore
 }
 
+// InMemoryDataStore struct represents the in-memory data store, including data, alerts, and a file for persistence
 type InMemoryDataStore struct {
 	Data    map[string]Data
 	Alerts  map[string][]Alerts
@@ -31,6 +33,7 @@ func NewServer() *Server {
 	}
 }
 
+// The Main function sets up and starts the server and also defines routes.
 func main() {
 	server := NewServer()
 	r := chi.NewRouter()
@@ -42,17 +45,20 @@ func main() {
 	r.Post("/alerts", server.WriteAlert)
 	r.Get("/alerts/service_id={service_id}&start_ts={alert_ts}&end_ts={alert_end_ts}", server.ReadAlerts)
 
-	// Server start
+	// start the Server
 	log.Println("Server started...")
 	if err := http.ListenAndServe(":8080", r); err != nil {
 		log.Fatal(fmt.Sprintf("%+v", err))
 	}
 }
 
+// Result struct represents the result of an operation, also includes both alert ID and error.
 type Result struct {
 	AlertID string
 	Err     error
 }
+
+// ReqData struct represents the data structure request for writing alerts.
 
 type ReqData struct {
 	AlertID     string `json:"alert_id"`
